@@ -179,6 +179,12 @@ data:
       - name: sql_regeneration
         llm: litellm_llm.gpt-4o-mini-2024-07-18
         engine: wren_ui
+      - name: instructions_indexing
+        embedder: litellm_embedder.text-embedding-3-large
+        document_store: qdrant
+      - name: instructions_retrieval
+        embedder: litellm_embedder.text-embedding-3-large
+        document_store: qdrant
 
     ---
     settings:
