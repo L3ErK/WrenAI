@@ -7,27 +7,26 @@
 type: llm
 provider: litellm_llm
 models:
-# put AZURE_API_KEY=<your_api_key> in ~/.wrenai/.env
-- model: azure/gpt-4     # Your Azure deployment name, put 'azure/' before deployment name
-  api_base: https://endpoint.openai.azure.com  # Replace with your custom Azure endpoint
-  api_version: 2024-02-15-preview
-  timeout: 120
-  kwargs:
-    temperature: 0
-    n: 1
-    seed: 0
-    max_tokens: 4096
-    
+  # put AZURE_API_KEY=<your_api_key> in ~/.wrenai/.env
+  - model: azure/gpt-4 # Your Azure deployment name, put 'azure/' before deployment name
+    api_base: https://endpoint.openai.azure.com # Replace with your custom Azure endpoint
+    api_version: 2024-02-15-preview
+    timeout: 120
+    kwargs:
+      temperature: 0
+      n: 1
+      seed: 0
+      max_tokens: 4096
 
 ---
 type: embedder
-provider: litellm_embedder  
+provider: litellm_embedder
 models:
-# put AZURE_API_KEY=<your_api_key> in ~/.wrenai/.env
-- model: azure/text-embedding-ada-002  # Your Azure deployment name, put 'azure/' before deployment name
-  api_base: https://endpoint.openai.azure.com  # Replace with your custom Azure endpoint
-  api_version: 2023-05-15
-  timeout: 300
+  # put AZURE_API_KEY=<your_api_key> in ~/.wrenai/.env
+  - model: azure/text-embedding-ada-002 # Your Azure deployment name, put 'azure/' before deployment name
+    api_base: https://endpoint.openai.azure.com # Replace with your custom Azure endpoint
+    api_version: 2023-05-15
+    timeout: 300
 
 ---
 type: engine
@@ -37,8 +36,8 @@ endpoint: http://wren-ui:3000
 ---
 type: document_store
 provider: qdrant
-location: http://qdrant:6333  # Donot set the QDRANT_API_KEY if you are using the qdrant from docker
-embedding_model_dim: 1536  # Must match model dimension from embedder
+location: http://qdrant:6333 # Donot set the QDRANT_API_KEY if you are using the qdrant from docker
+embedding_model_dim: 1536 # Must match model dimension from embedder
 timeout: 120
 recreate_index: true
 
@@ -50,7 +49,7 @@ type: pipeline
 pipes:
   - name: db_schema_indexing
     embedder: litellm_embedder.azure/text-embedding-ada-002
-    document_store: qdrant  # Match document_store name
+    document_store: qdrant # Match document_store name
     llm: litellm_llm.azure/gpt-4
   - name: historical_question_indexing
     embedder: litellm_embedder.azure/text-embedding-ada-002
@@ -131,6 +130,9 @@ pipes:
   - name: sql_regeneration
     llm: litellm_llm.azure/gpt-4
     engine: wren_ui
+  - name: instructions_indexing
+    embedder: litellm_embedder.azure/text-embedding-ada-002
+    document_store: qdrant
 
 ---
 settings:

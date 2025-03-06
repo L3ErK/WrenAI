@@ -7,23 +7,23 @@
 type: llm
 provider: litellm_llm
 models:
-# put GROQ_API_KEY=<your_api_key> in ~/.wrenai/.env
-- api_base: https://api.groq.com/openai/v1
-  model: groq/llama-3.3-70b-specdec  # groq/<ollama_model_name>
-  timeout: 120
-  kwargs:
-    n: 1
-    temperature: 0
+  # put GROQ_API_KEY=<your_api_key> in ~/.wrenai/.env
+  - api_base: https://api.groq.com/openai/v1
+    model: groq/llama-3.3-70b-specdec # groq/<ollama_model_name>
+    timeout: 120
+    kwargs:
+      n: 1
+      temperature: 0
 
 ---
 type: embedder
 provider: litellm_embedder
 models:
-# define OPENAI_API_KEY=<api_key> in ~/.wrenai/.env if you are using openai embedding model
-# please refer to LiteLLM documentation for more details: https://docs.litellm.ai/docs/providers
-- model: text-embedding-3-large  # put your embedding model name here, if it is not openai embedding model, should be <provider>/<model_name>
-  api_base: https://api.openai.com/v1  # change this according to your embedding model
-  timeout: 120
+  # define OPENAI_API_KEY=<api_key> in ~/.wrenai/.env if you are using openai embedding model
+  # please refer to LiteLLM documentation for more details: https://docs.litellm.ai/docs/providers
+  - model: text-embedding-3-large # put your embedding model name here, if it is not openai embedding model, should be <provider>/<model_name>
+    api_base: https://api.openai.com/v1 # change this according to your embedding model
+    timeout: 120
 
 ---
 type: engine
@@ -34,7 +34,7 @@ endpoint: http://wren-ui:3000
 type: document_store
 provider: qdrant
 location: http://qdrant:6333
-embedding_model_dim: 3072  # put your embedding model dimension here
+embedding_model_dim: 3072 # put your embedding model dimension here
 timeout: 120
 recreate_index: true
 
@@ -122,13 +122,16 @@ pipes:
   - name: sql_regeneration
     llm: litellm_llm.groq/llama-3.3-70b-specdec
     engine: wren_ui
+  - name: instructions_indexing
+    embedder: litellm_embedder.text-embedding-3-large
+    document_store: qdrant
 
 ---
 settings:
   column_indexing_batch_size: 50
   table_retrieval_size: 10
   table_column_retrieval_size: 100
-  allow_using_db_schemas_without_pruning: false  # if you want to use db schemas without pruning, set this to true. It will be faster
+  allow_using_db_schemas_without_pruning: false # if you want to use db schemas without pruning, set this to true. It will be faster
   query_cache_maxsize: 1000
   query_cache_ttl: 3600
   langfuse_host: https://cloud.langfuse.com
